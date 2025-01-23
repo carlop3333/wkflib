@@ -1,4 +1,11 @@
-wikidump.xml
-functions.json
-Z1.json
-Z1_goal.json
+# articles & pages dump: https://dumps.wikimedia.org/wikifunctionswiki/20250101/
+test/testfiles/wikidump.xml
+
+# macOS
+.DS_Store
+
+# Deno
+deno.lock
+
+# VSCode
+.vscode/launch.json

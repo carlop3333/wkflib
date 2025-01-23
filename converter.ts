@@ -1,18 +1,31 @@
-import * as xml from "https://deno.land/x/xml@6.0.1/mod.ts";
+import { parse } from "https://deno.land/x/xml@6.0.1/mod.ts";
+import { Buffer } from "@std/io/buffer";
 
-const data = xml.parse(await Deno.open("./wikidump.xml", {read: true}));
-const rootFile = await Deno.create('./functions.json');
-// deno-lint-ignore no-explicit-any
-const functionsList: any = {}
-//@ts-ignore: Explicit
-console.log(data.mediawiki["~children"].forEach((page) => {
-    if (page["~name"] == "page" && String(page.title).startsWith("Z")) {
-        const functionID = page.title;
-        console.log('Saving function', functionID);
-        functionsList[functionID] = JSON.parse(page.revision.text["#text"]);
-    }
-}));
-const encoded = new TextEncoder().encode(JSON.stringify(functionsList));
-const written = rootFile.writeSync(encoded);
-console.log(`Written ${written} bytes of data.`);
+/**
+ * Convert a WikiFunctions XML dump and extract the functions to a JSON
+ * @param file - The file/buffer to convert. 
+ * @returns {Buffer}
+ */
+export function convertXML(file: Buffer): Buffer {
+  const data = parse(file);
+  const rootFile = new Buffer();
+  // deno-lint-ignore no-explicit-any
+  const functionsList: any = {};
+  console.debug(
+    //@ts-ignore: Explicit
+    data.mediawiki["~children"].forEach((page) => {
+      if (page["~name"] == "page" && String(page.title).startsWith("Z")) {
+        if (typeof page.revision.text["#text"] !== typeof String) {
+          const functionID = page.title;
+          //console.debug(`Saving function ${functionID}.`);
+          functionsList[functionID] = JSON.parse(page.revision.text["#text"]);
+        } else throw new SyntaxError("No text found on ZPage");
+      }
+    })
+  );
+  const encoded = new TextEncoder().encode(JSON.stringify(functionsList));
+  const _written = rootFile.writeSync(encoded);
+  //console.debug(`Written ${_written} bytes of data.`);
+  return rootFile;
+}
 
