@@ -1,4 +1,4 @@
-import { parse } from "https://deno.land/x/xml@6.0.1/mod.ts";
+import { parse } from "@libs/xml";
 import { Buffer } from "@std/io/buffer";
 
 /**

@@ -1,4 +1,4 @@
-import { Buffer } from "@std/io/buffer";
+import type { Buffer } from "@std/io/buffer";
 import { bufToUint8 } from "./utils.ts";
 
 interface MultilingualBase {
@@ -40,7 +40,7 @@ export class Labelizer {
    * Gets the (semi)labelized dump.
    * @returns a JSON with all objects. Only labelized: type, label, aliases, and description (if they exist!) in said ZLang
    */
-  getAllObjects() {
+  getAllObjects(): MultilingualBase {
     return this.zobjects;
   }
 
@@ -49,7 +49,7 @@ export class Labelizer {
    * @argument specific_type Lists ALL Objects of an specific type. Useful for getting things like types (heh), functions, and languages.
    * @returns a JSON with all types. in order of canonical to labelized.
    */
-  listAllObjects(specific_type: string | undefined = undefined) {
+  listAllObjects(specific_type: string | undefined = undefined): Record<string, string> {
     //? Maybe something like {{add_unimpled_funcs: boolean, add_untested_funcs: boolean}}?
     const ret: Record<string, string> = {};
     for (const z in this.zobjects) {

@@ -1,5 +1,7 @@
 # wkflib
 
+[![JSR](https://jsr.io/badges/@carlop3333/wkflib)](https://jsr.io/@carlop3333/wkflib)
+
 This library converts WikiFunctions XML dumps into readable JSON dumps, and labelizes a part of the dumps: the only thing that is still canonical is the "value" argument: it is leaved by your own interpretation as-is.
 
 NOTE: Node support will be added in the future
