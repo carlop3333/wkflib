@@ -1,6 +1,6 @@
 {
   "name": "@carlop3333/wkflib",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "exports": "./mod.ts",
   "imports": {
@@ -8,5 +8,10 @@
     "@std/assert": "jsr:@std/assert@^1.0.10",
     "@std/io": "jsr:@std/io@^0.225.0",
     "@std/path": "jsr:@std/path@^1.0.8"
+  },
+  "publish": {
+    "exclude": [
+      "test/"
+    ]
   }
 }

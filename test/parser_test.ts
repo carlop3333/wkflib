@@ -1,34 +1,38 @@
-import { Buffer } from "@std/io/buffer";
 import { Labelizer } from "../parser.ts";
-import { bufToUint8 } from "../utils.ts";
 import { join } from "@std/path";
 import { assertEquals } from "@std/assert";
 
+const readableToUint8 = async (buf: Deno.FsFile): Promise<Uint8Array> => {
+  const arr = new Uint8Array(buf.statSync().size)
+  await buf.read(arr);
+  return arr;
+}
+
 //open og dump
 const file = Deno.openSync(join(import.meta.dirname!, "testfiles/functions.json"));
-const buf = bufToUint8(file);
+const buf = await readableToUint8(file);
 const decoder = new TextDecoder();
 
-//
 
-Deno.test("Labelize - semiLabelize only", () => {
-  const labelizer = new Labelizer(new Buffer(buf), "Z1002");
+
+Deno.test("Labelize - semiLabelize only", async () => {
+  const labelizer = new Labelizer(buf, "Z1002");
 
   //open semi labelized dump
   const wkdump = Deno.openSync(join(import.meta.dirname!, "testfiles/wikidump.json"));
-  const dec = decoder.decode(bufToUint8(wkdump));
+  const dec = decoder.decode(await readableToUint8(wkdump));
 
   wkdump.close();
 
-  assertEquals(JSON.stringify(labelizer.zobjects), dec);
+  assertEquals(JSON.stringify(labelizer.getAllObjects()), dec);
 });
 
-Deno.test("Labelize - ZObjects list", () => {
-  const labelizer = new Labelizer(new Buffer(buf), "Z1002");
+Deno.test("Labelize - ZObjects list", async () => {
+  const labelizer = new Labelizer(buf, "Z1002");
 
   //open list
   const list = Deno.openSync(join(import.meta.dirname!, "testfiles/list.json"));
-  const dec = decoder.decode(bufToUint8(list));
+  const dec = decoder.decode(await readableToUint8(list));
 
   list.close();
 
@@ -97,7 +101,7 @@ Deno.test("Labelize - Types list", () => {
     Z20825: "Floating point special value",
     Z20838: "float64",
   };
-  const labelizer = new Labelizer(new Buffer(buf), "Z1002");
+  const labelizer = new Labelizer(buf, "Z1002");
 
   assertEquals(JSON.stringify(typelist), JSON.stringify(labelizer.listAllObjects("Z4")));
 });

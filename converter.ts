@@ -1,14 +1,14 @@
 import { parse } from "@libs/xml";
-import { Buffer } from "@std/io/buffer";
+
 
 /**
  * Convert a WikiFunctions XML dump and extract the functions to a JSON
  * @param file - The file/buffer to convert. 
  * @returns {Buffer}
  */
-export function convertXML(file: Buffer): Buffer {
-  const data = parse(file);
-  const rootFile = new Buffer();
+export function convertXML(file: Uint8Array): Uint8Array {
+  const data = parse(new TextDecoder().decode(file));
+
   // deno-lint-ignore no-explicit-any
   const functionsList: any = {};
   console.debug(
@@ -24,8 +24,8 @@ export function convertXML(file: Buffer): Buffer {
     })
   );
   const encoded = new TextEncoder().encode(JSON.stringify(functionsList));
-  const _written = rootFile.writeSync(encoded);
+  const _written = encoded.byteLength;
   //console.debug(`Written ${_written} bytes of data.`);
-  return rootFile;
+  return encoded;
 }
 

@@ -2,9 +2,8 @@
 
 [![JSR](https://jsr.io/badges/@carlop3333/wkflib)](https://jsr.io/@carlop3333/wkflib)
 
-This library converts WikiFunctions XML dumps into readable JSON dumps, and labelizes a part of the dumps: the only thing that is still canonical is the "value" argument: it is leaved by your own interpretation as-is.
+This library converts WikiFunctions/WikiLambda XML dumps into readable JSON dumps, and labelizes a part of the dumps: the only thing that is still canonical is the "value" argument: it is leaved by your own interpretation as-is.
 
-NOTE: Node support will be added in the future
 
 ## Usage
 
@@ -12,15 +11,16 @@ NOTE: Node support will be added in the future
 import {convertXML, Labelizer} from "@carlop3k/wkflib";
 
 // open your XML dump
-const file = Deno.openSync("..."); // soon with fs.readFile, or with fetch()
+const file = Deno.openSync("..."); 
+const file = fs.readFileSync("..."); //or with fetch, whatever you want
 
-// transform the file into a Deno buffer 
-const buf = new Buffer([/* ... */])
+// transform the file into an Uint8Array if you're in Deno/Node
+const buf = new Uint8Array([/* ... */])
 
 // parses the dumped XML and returns another buffer, this time in a JSON format.
 const dump = convertXML(buf)
 
-// finally calls the (semi)labelizer, use with the language of your preference
+// finally call the (semi)labelizer, use with the language of your preference
 // in this example, English is Z1002
 const zobjects = new Labelizer(dump, "Z1002")
 

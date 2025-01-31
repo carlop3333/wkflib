@@ -1,37 +1,27 @@
-import { assertEquals } from "@std/assert/equals";
-import { assertIsError } from "@std/assert/is-error";
-import { join } from "@std/path";
+import test from "node:test";
+import fs from "node:fs";
+import assert from "node:assert"
+import { join } from "node:path";
 import { convertXML } from "../converter.ts";
 
-const readableToUint8 = async (buf: Deno.FsFile): Promise<Uint8Array> => {
-  const arr = new Uint8Array(buf.statSync().size)
-  await buf.read(arr);
-  return arr;
-}
+test("convertXML - XML conversion with WF dump", () => {
+  const xml = fs.readFileSync(join(__dirname, "testfiles/wikidump.xml"));
 
-Deno.test("convertXML - XML conversion with WF dump", async () => {
-  const xml = Deno.openSync(join(import.meta.dirname!, "testfiles/wikidump.xml"));
-
-  // Read the file then create an Buffer
-  const result = convertXML(await readableToUint8(xml));
+  const result = convertXML(
+    new Uint8Array(xml.buffer.slice(xml.byteOffset, xml.byteOffset + xml.buffer.byteLength))
+  );
   console.log(">got result...");
 
-  // Read the result then decode it as an input
-
-  //Read expected output then assert them
   console.log(">opening functions.json");
-  const expectedOut = Deno.openSync(join(import.meta.dirname!, "testfiles/functions.json"));
-  const outarr = await readableToUint8(expectedOut);
+  const expout = fs.readFileSync(join(__dirname, "testfiles/functions.json"));
+  const outarr = new Uint8Array(expout.buffer.slice(expout.byteOffset, expout.byteOffset + expout.buffer.byteLength))
 
-  //noleak
-  expectedOut.close();
-  xml.close();
-
-  assertEquals(result, outarr);
+  assert.deepStrictEqual(result, outarr);
 });
 
+
 //* Should throw SyntaxError
-Deno.test("convertXML - nothingburger", () => {
+test("convertXML - nothingburger", () => {
   //* garbo XML
   const xml = `<mediawiki>
   <page>
@@ -73,9 +63,5 @@ Deno.test("convertXML - nothingburger", () => {
     </revision>
   </page>
   `;
-  try {
-    convertXML(new TextEncoder().encode(xml));
-  } catch (e) {
-    assertIsError(e, SyntaxError);
-  }
+  assert.throws(() => convertXML(new TextEncoder().encode(xml)))
 });

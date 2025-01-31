@@ -1,6 +1,3 @@
-import type { Buffer } from "@std/io/buffer";
-import { bufToUint8 } from "./utils.ts";
-
 interface MultilingualBase {
   [name: string]: unknown;
 }
@@ -18,6 +15,7 @@ type ZObject = {
   canonical_value: string;
 };
 
+
 export class Labelizer {
   /**
    * Semi labelized dump.
@@ -31,8 +29,8 @@ export class Labelizer {
    * @param {Buffer} ZObjects The dumped ZObjects
    * @param {string} ZLanguage The ZLanguage you want the function to be in. By default is English = Z1002
    */
-  constructor(zObjects: Buffer, zLanguage: string) {
-    this.zobjects = JSON.parse(new TextDecoder().decode(bufToUint8(zObjects)));
+  constructor(zObjects: Uint8Array, zLanguage: string) {
+    this.zobjects = JSON.parse(new TextDecoder().decode(zObjects));
     this.#semiLabelize(zLanguage);
   }
 
